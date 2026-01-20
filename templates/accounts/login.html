@@ -1,0 +1,38 @@
+{% extends "core/base_public.html" %}
+{% load static %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'core/public.css' %}">
+<link rel="stylesheet" href="{% static 'core/login.css' %}">
+<style>
+</style>
+
+<div class="login-container">
+    <div class="login-header">
+        <p>Accedi al tuo account</p>
+    </div>
+    {% if form.errors %}
+    <div class="error-messages">
+        {% for field, errors in form.errors.items %}
+            {% for error in errors %}
+                <p>{{ error }}</p>
+            {% endfor %}
+        {% endfor %}
+    </div>
+    {% endif %}
+    <form method="post" class="login-form">
+        {% csrf_token %}
+        
+        {% for field in form %}
+        <div class="form-field">
+            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+            {{ field }}
+        </div>
+        {% endfor %}
+
+        <button type="submit" class="btn-submit">Accedi</button>
+        <p class="register-link">Non hai un account? <a href="{% url 'accounts:registrazione' %}">Registrati qui</a></p>
+    </form>
+</div>
+
+{% endblock %}

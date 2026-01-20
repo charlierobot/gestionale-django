@@ -1,0 +1,129 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block title %}Gestione Ordini - Admin{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Gestione Ordini</h2>
+        <a href="{% url 'core:dashboard' %}" class="btn btn-secondary">Torna alla Dashboard</a>
+    </div>
+
+    <!-- Filtri -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <form method="get" class="row g-3">
+                <div class="col-md-3">
+                    <label for="stato" class="form-label">Stato</label>
+                    <select name="stato" id="stato" class="form-select">
+                        <option value="">Tutti</option>
+                        <option value="in_attesa">In Attesa</option>
+                        <option value="confermato">Confermato</option>
+                        <option value="spedito">Spedito</option>
+                        <option value="consegnato">Consegnato</option>
+                        <option value="annullato">Annullato</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label for="fornitore" class="form-label">Fornitore</label>
+                    <select name="fornitore" id="fornitore" class="form-select">
+                        <option value="">Tutti</option>
+                        {% for fornitore in fornitori %}
+                        <option value="{{ fornitore.id }}">{{ fornitore.nome }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label for="cliente" class="form-label">Cliente</label>
+                    <input type="text" name="cliente" id="cliente" class="form-control" placeholder="Nome cliente">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">&nbsp;</label>
+                    <button type="submit" class="btn btn-primary w-100">Filtra</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Tabella Ordini -->
+    <div class="card">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>ID Ordine</th>
+                            <th>Cliente</th>
+                            <th>Fornitore</th>
+                            <th>Data</th>
+                            <th>Totale</th>
+                            <th>Stato</th>
+                            <th>Azioni</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for ordine in ordini %}
+                        <tr>
+                            <td>#{{ ordine.id }}</td>
+                            <td>{{ ordine.utente.get_full_name|default:ordine.utente.username }}</td>
+                            <td>{{ ordine.fornitore.nome }}</td>
+                            <td>{{ ordine.data_ordine|date:"d/m/Y H:i" }}</td>
+                            <td>€ {{ ordine.totale }}</td>
+                            <td>
+                                <span class="badge bg-{% if ordine.stato == 'in_attesa' %}warning{% elif ordine.stato == 'confermato' %}info{% elif ordine.stato == 'spedito' %}primary{% elif ordine.stato == 'consegnato' %}success{% else %}danger{% endif %}">
+                                    {{ ordine.get_stato_display }}
+                                </span>
+                            </td>
+                            <td>
+                                <a href="{% url 'core:ordine_detail' ordine.id %}" class="btn btn-sm btn-info">Dettagli</a>
+                                <form method="post" action="{% url 'core:admin_ordine_update_stato' ordine.id %}" class="d-inline">
+                                    {% csrf_token %}
+                                    <select name="stato" class="form-select form-select-sm d-inline w-auto" onchange="this.form.submit()">
+                                        <option value="">Cambia stato</option>
+                                        <option value="in_attesa">In Attesa</option>
+                                        <option value="confermato">Confermato</option>
+                                        <option value="spedito">Spedito</option>
+                                        <option value="consegnato">Consegnato</option>
+                                        <option value="annullato">Annullato</option>
+                                    </select>
+                                </form>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="7" class="text-center">Nessun ordine trovato</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Paginazione -->
+            {% if ordini.has_other_pages %}
+            <nav aria-label="Navigazione pagine">
+                <ul class="pagination justify-content-center mt-4">
+                    {% if ordini.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ ordini.previous_page_number }}">Precedente</a>
+                    </li>
+                    {% endif %}
+                    
+                    {% for num in ordini.paginator.page_range %}
+                    <li class="page-item {% if ordini.number == num %}active{% endif %}">
+                        <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                    </li>
+                    {% endfor %}
+                    
+                    {% if ordini.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ ordini.next_page_number }}">Successivo</a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </nav>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,216 @@
+    {% extends "core/base.html" %}
+
+    {% block content %}
+
+    {% load static %}
+    {% load djicons %}
+
+    {% block css %}
+    <link rel="stylesheet" href="{% static 'core/dashboard.css' %}">
+    <link rel="stylesheet" href="{% static 'core/prodotto_list.css' %}">
+    {% endblock %}
+
+    <div class="dashboard-top">
+        <nav class="dashboard-nav">
+            <div class="dashboard-links">
+                <a href="{% url 'core:home' %}">Home</a>
+                <a href="{% url 'core:dashboard_admin' %}">Dashboard</a>
+                <a href="#">Utenti</a>
+                <a href="{% url 'core:prodotto_list' %}">Prodotti</a>
+                <form method="post" action="{% url 'accounts:logout' %}" class="logout-form">
+                    {% csrf_token %}
+                    <button type="submit" class="logout">Logout</button>
+                </form>
+            </div>
+        </nav>
+    </div>
+
+    <div class="dashboard-layout">
+        <div class="detail-container">
+            <div class="detail-header">
+                <h2>Dettaglio Prodotto</h2>
+            </div>
+
+            <div class="detail-content">
+                <div class="detail-grid">
+                    <div class="detail-field">
+                        <label>Nome</label>
+                        <p>{{ object.nome }}</p>
+                    </div>
+
+                    <div class="detail-field">
+                        <label>Codice</label>
+                        <p>{{ object.codice }}</p>
+                    </div>
+
+                    <div class="detail-field">
+                        <label>Categoria</label>
+                        <p>{{ object.categoria }}</p>
+                    </div>
+
+                    <div class="detail-field">
+                        <label>Descrizione</label>
+                        <p>{{ object.descrizione|default:"Non disponibile" }}</p>
+                    </div>
+
+                    <div class="detail-field">
+                        <label>Prezzo</label>
+                        <p>{{ object.prezzo }} €</p>
+                    </div>
+
+                    <div class="detail-field">
+                        <label>Quantità</label>
+                        <p>{{ object.quantita }}</p>
+                    </div>
+
+                    <div class="detail-field">
+                        <label>Fornitore</label>
+                        <p>{{ object.fornitore|default:"Non assegnato" }}</p>
+                    </div>
+                </div>
+
+                <div class="detail-actions">
+                    <a href="{% url 'core:prodotto_update' object.pk %}" class="detail-btn detail-btn-edit">Modifica</a>
+                    <a href="{% url 'core:prodotto_delete' object.pk %}" class="detail-btn detail-btn-delete">Elimina</a>
+                    <a href="{% url 'core:prodotto_list' %}" class="detail-btn detail-btn-back">Torna alla lista</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .detail-container {
+            max-width: 900px;
+            margin: 40px auto;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+            overflow: hidden;
+        }
+
+        .detail-header {
+            background: linear-gradient(135deg, #4a9b8e 0%, #3a8b7e 100%);
+            color: white;
+            padding: 32px;
+            text-align: center;
+        }
+
+        .detail-header h2 {
+            margin: 0;
+            font-size: 32px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+
+        .detail-content {
+            padding: 40px;
+        }
+
+        .detail-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+
+        .detail-field {
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 12px;
+            border-left: 4px solid #4a9b8e;
+            transition: all 0.3s ease;
+        }
+
+        .detail-field:hover {
+            background: #f0f9f7;
+            transform: translateX(4px);
+            box-shadow: 0 4px 12px rgba(74, 155, 142, 0.1);
+        }
+
+        .detail-field label {
+            display: block;
+            font-weight: 600;
+            color: #4a9b8e;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+
+        .detail-field p {
+            margin: 0;
+            color: #333;
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        .detail-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            padding-top: 32px;
+            border-top: 2px solid #f0f0f0;
+            flex-wrap: wrap;
+        }
+
+        .detail-btn {
+            padding: 14px 28px;
+            text-decoration: none;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 15px;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            letter-spacing: 0.3px;
+            color: white;
+        }
+
+        .detail-btn-edit {
+            background: linear-gradient(135deg, #5cb85c 0%, #4cae4c 100%);
+            box-shadow: 0 4px 12px rgba(92, 184, 92, 0.3);
+        }
+
+        .detail-btn-edit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(92, 184, 92, 0.4);
+        }
+
+        .detail-btn-delete {
+            background: linear-gradient(135deg, #d9534f 0%, #c9302c 100%);
+            box-shadow: 0 4px 12px rgba(217, 83, 79, 0.3);
+        }
+
+        .detail-btn-delete:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(217, 83, 79, 0.4);
+        }
+
+        .detail-btn-back {
+            background: linear-gradient(135deg, #6c757d 0%, #5a6268 100%);
+            box-shadow: 0 4px 12px rgba(108, 117, 125, 0.3);
+        }
+
+        .detail-btn-back:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(108, 117, 125, 0.4);
+        }
+
+        @media (max-width: 768px) {
+            .detail-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .detail-actions {
+                flex-direction: column;
+            }
+
+            .detail-btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+
+    {% endblock %}

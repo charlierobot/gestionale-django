@@ -1,0 +1,210 @@
+{% extends 'core/base.html' %}
+{% load static %}
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'core/dashboard.css' %}">
+<style>
+    .ordine-detail-container {
+        max-width: 900px;
+        margin: 40px auto;
+        padding: 20px;
+    }
+
+    .ordine-header {
+        background: white;
+        padding: 32px;
+        border-radius: 12px;
+        margin-bottom: 24px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+    }
+
+    .ordine-header h1 {
+        color: #4a9b8e;
+        font-size: 32px;
+        font-weight: 700;
+        margin-bottom: 20px;
+        letter-spacing: -0.5px;
+    }
+
+    .ordine-info {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 20px;
+        margin-top: 20px;
+    }
+
+    .info-item {
+        padding: 16px;
+        background: #f8f9fa;
+        border-radius: 8px;
+        border-left: 4px solid #4a9b8e;
+    }
+
+    .info-item label {
+        font-size: 12px;
+        text-transform: uppercase;
+        color: #666;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+        display: block;
+        margin-bottom: 8px;
+    }
+
+    .info-item .value {
+        font-size: 18px;
+        font-weight: 700;
+        color: #333;
+    }
+
+    .prodotti-section {
+        background: white;
+        padding: 32px;
+        border-radius: 12px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+    }
+
+    .prodotti-section h2 {
+        color: #4a9b8e;
+        font-size: 24px;
+        font-weight: 700;
+        margin-bottom: 24px;
+    }
+
+    .prodotti-table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+        border-radius: 8px;
+        overflow: hidden;
+    }
+
+    .prodotti-table thead {
+        background: linear-gradient(135deg, #4a9b8e 0%, #3a8b7e 100%);
+        color: white;
+    }
+
+    .prodotti-table th {
+        padding: 16px;
+        text-align: left;
+        font-weight: 600;
+        font-size: 14px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .prodotti-table td {
+        padding: 16px;
+        border-bottom: 1px solid #e0e0e0;
+    }
+
+    .prodotti-table tbody tr {
+        background: #fafafa;
+        transition: all 0.2s ease;
+    }
+
+    .prodotti-table tbody tr:hover {
+        background: #f0f0f0;
+        transform: scale(1.01);
+    }
+
+    .prodotti-table tbody tr:nth-child(even) {
+        background: white;
+    }
+
+    .totale-section {
+        margin-top: 24px;
+        padding: 24px;
+        background: linear-gradient(135deg, #4a9b8e 0%, #3a8b7e 100%);
+        border-radius: 8px;
+        text-align: right;
+    }
+
+    .totale-section strong {
+        color: white;
+        font-size: 24px;
+        font-weight: 700;
+    }
+
+    .badge {
+        display: inline-block;
+        padding: 6px 12px;
+        border-radius: 6px;
+        font-size: 14px;
+        font-weight: 600;
+    }
+
+    .badge-pending {
+        background: #ffc107;
+        color: #000;
+    }
+
+    .badge-completed {
+        background: #28a745;
+        color: white;
+    }
+
+    @media (max-width: 768px) {
+        .ordine-info {
+            grid-template-columns: 1fr;
+        }
+        
+        .prodotti-table {
+            font-size: 14px;
+        }
+        
+        .prodotti-table th,
+        .prodotti-table td {
+            padding: 12px 8px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="ordine-detail-container">
+    <div class="ordine-header">
+        <h1>Ordine #{{ ordine.id }}</h1>
+        <div class="ordine-info">
+            <div class="info-item">
+                <label>Data Ordine</label>
+                <div class="value">{{ ordine.data_ordine|date:"d/m/Y H:i" }}</div>
+            </div>
+            <div class="info-item">
+                <label>Stato</label>
+                <div class="value">
+                    <span class="badge {% if ordine.stato == 'pending' %}badge-pending{% else %}badge-completed{% endif %}">
+                        {{ ordine.get_stato_display }}
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="prodotti-section">
+        <h2>Prodotti Ordinati</h2>
+        <table class="prodotti-table">
+            <thead>
+                <tr>
+                    <th>Prodotto</th>
+                    <th>Quantità</th>
+                    <th>Prezzo Unitario</th>
+                    <th>Subtotale</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for det in ordine.dettagli.all %}
+                <tr>
+                    <td><strong>{{ det.prodotto.nome }}</strong></td>
+                    <td>{{ det.quantita }}</td>
+                    <td>€ {{ det.prezzo_unitario }}</td>
+                    <td>€ {{ det.subtotale }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <div class="totale-section">
+            <strong>Totale: € {{ ordine.totale }}</strong>
+        </div>
+    </div>
+</div>
+{% endblock %}

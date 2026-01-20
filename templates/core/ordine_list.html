@@ -1,0 +1,360 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'core/dashboard.css' %}">
+<style>
+    .orders-container {
+        max-width: 1400px;
+        margin: 40px auto;
+        padding: 20px;
+    }
+
+    .orders-header {
+        background: white;
+        padding: 32px;
+        border-radius: 12px;
+        margin-bottom: 30px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 20px;
+    }
+
+    .orders-header h1 {
+        color: #4a9b8e;
+        font-size: 32px;
+        font-weight: 700;
+        margin: 0;
+    }
+
+    .orders-stats {
+        display: flex;
+        gap: 30px;
+        flex-wrap: wrap;
+    }
+
+    .stat-item {
+        text-align: center;
+    }
+
+    .stat-item .label {
+        font-size: 12px;
+        color: #666;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 4px;
+    }
+
+    .stat-item .value {
+        font-size: 24px;
+        font-weight: 700;
+        color: #4a9b8e;
+    }
+
+    .orders-grid {
+        display: grid;
+        gap: 24px;
+    }
+
+    .order-card {
+        background: white;
+        border-radius: 12px;
+        padding: 24px;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+        border-left: 4px solid #4a9b8e;
+    }
+
+    .order-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+    }
+
+    .order-card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 20px;
+        flex-wrap: wrap;
+        gap: 16px;
+    }
+
+    .order-number {
+        font-size: 20px;
+        font-weight: 700;
+        color: #333;
+    }
+
+    .order-date {
+        color: #666;
+        font-size: 14px;
+        margin-top: 4px;
+    }
+
+    .order-status {
+        padding: 8px 16px;
+        border-radius: 20px;
+        font-size: 13px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .status-in_attesa {
+        background: #fff3cd;
+        color: #856404;
+    }
+
+    .status-confermato {
+        background: #d1ecf1;
+        color: #0c5460;
+    }
+
+    .status-spedito {
+        background: #cfe2ff;
+        color: #084298;
+    }
+
+    .status-consegnato {
+        background: #d1e7dd;
+        color: #0f5132;
+    }
+
+    .status-annullato {
+        background: #f8d7da;
+        color: #842029;
+    }
+
+    .order-card-body {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 20px;
+        padding: 20px 0;
+        border-top: 1px solid #e0e0e0;
+        border-bottom: 1px solid #e0e0e0;
+    }
+
+    .order-info-item {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+    }
+
+    .order-info-label {
+        font-size: 12px;
+        color: #666;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .order-info-value {
+        font-size: 18px;
+        font-weight: 600;
+        color: #333;
+    }
+
+    .order-total {
+        color: #4a9b8e !important;
+        font-size: 24px !important;
+    }
+
+    .order-card-footer {
+        margin-top: 20px;
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+    }
+
+    .btn-order {
+        padding: 12px 24px;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 14px;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        border: none;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .btn-primary-order {
+        background: linear-gradient(135deg, #4a9b8e 0%, #3a8b7e 100%);
+        color: white;
+    }
+
+    .btn-primary-order:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(74, 155, 142, 0.3);
+        color: white;
+    }
+
+    .btn-secondary-order {
+        background: #f1f1f1;
+        color: #555;
+    }
+
+    .btn-secondary-order:hover {
+        background: #e0e0e0;
+        transform: translateY(-2px);
+        color: #555;
+    }
+
+    .empty-state {
+        background: white;
+        border-radius: 12px;
+        padding: 80px 40px;
+        text-align: center;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+    }
+
+    .empty-state-icon {
+        font-size: 80px;
+        color: #e0e0e0;
+        margin-bottom: 24px;
+    }
+
+    .empty-state h2 {
+        color: #4a9b8e;
+        margin-bottom: 16px;
+        font-size: 28px;
+    }
+
+    .empty-state p {
+        color: #666;
+        margin-bottom: 32px;
+        font-size: 16px;
+    }
+
+    .btn-shop {
+        display: inline-block;
+        padding: 16px 32px;
+        background: linear-gradient(135deg, #4a9b8e 0%, #3a8b7e 100%);
+        color: white;
+        text-decoration: none;
+        border-radius: 8px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+
+    .btn-shop:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(74, 155, 142, 0.3);
+        color: white;
+    }
+
+    @media (max-width: 768px) {
+        .orders-header {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .orders-header h1 {
+            font-size: 24px;
+        }
+
+        .order-card-header {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .order-card-body {
+            grid-template-columns: 1fr;
+        }
+
+        .order-card-footer {
+            flex-direction: column;
+        }
+
+        .btn-order {
+            width: 100%;
+            justify-content: center;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="dashboard-top">
+    <nav class="dashboard-nav">
+        <a href="{% url 'core:dashboard_cliente' %}">Dashboard</a>
+        <a href="{% url 'core:cart_detail' %}">Carrello</a>
+        <a href="{% url 'core:ordini_cliente' %}">I Miei Ordini</a>
+        <form method="post" action="{% url 'accounts:logout' %}" class="logout-form">
+            {% csrf_token %}
+            <button type="submit" class="logout">Logout</button>
+        </form>
+    </nav>
+</div>
+
+<div class="orders-container">
+    {% if ordini %}
+    <div class="orders-header">
+        <div>
+            <h1>I Miei Ordini</h1>
+            <p style="color: #666; margin: 8px 0 0 0;">Gestisci e monitora i tuoi acquisti</p>
+        </div>
+        <div class="orders-stats">
+            <div class="stat-item">
+                <div class="label">Totale Ordini</div>
+                <div class="value">{{ ordini|length }}</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="orders-grid">
+        {% for ordine in ordini %}
+        <div class="order-card">
+            <div class="order-card-header">
+                <div>
+                    <div class="order-number">Ordine #{{ ordine.id }}</div>
+                    <div class="order-date">{{ ordine.data_ordine|date:"d/m/Y - H:i" }}</div>
+                </div>
+                <span class="order-status status-{{ ordine.stato }}">
+                    {{ ordine.get_stato_display }}
+                </span>
+            </div>
+
+            <div class="order-card-body">
+                <div class="order-info-item">
+                    <span class="order-info-label">Totale Ordine</span>
+                    <span class="order-info-value order-total">€ {{ ordine.totale|floatformat:2 }}</span>
+                </div>
+                <div class="order-info-item">
+                    <span class="order-info-label">Stato</span>
+                    <span class="order-info-value">{{ ordine.get_stato_display }}</span>
+                </div>
+                <div class="order-info-item">
+                    <span class="order-info-label">Data Ordine</span>
+                    <span class="order-info-value">{{ ordine.data_ordine|date:"d/m/Y" }}</span>
+                </div>
+            </div>
+
+            <div class="order-card-footer">
+                <a href="{% url 'core:ordine_detail' ordine.id %}" class="btn-order btn-primary-order">
+                    <span>📋</span> Vedi Dettagli
+                </a>
+                {% if ordine.stato == 'in_attesa' %}
+                <button class="btn-order btn-secondary-order">
+                    <span>❌</span> Annulla Ordine
+                </button>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    {% else %}
+    <div class="empty-state">
+        <div class="empty-state-icon">🛒</div>
+        <h2>Nessun ordine ancora</h2>
+        <p>Inizia a fare shopping e i tuoi ordini appariranno qui</p>
+        <a href="{% url 'core:dashboard_cliente' %}" class="btn-shop">Inizia a fare acquisti</a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

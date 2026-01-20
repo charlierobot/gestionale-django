@@ -1,0 +1,16 @@
+
+{% load static %}
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Accesso al gestionale{% endblock %}</title>
+
+    <link rel="stylesheet" href="{% static 'core/public.css' %}">
+</head>
+<body>
+
+    {% block content %}{% endblock %}
+
+</body>
+</html>

@@ -1,0 +1,84 @@
+{% extends "core/base.html" %}
+{% load static %}
+{% load djicons %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'core/dashboard.css' %}">
+<link rel="stylesheet" href="{% static 'core/prodotto_list.css' %}">
+<link rel="stylesheet" href="{% static 'core/prodotto_form.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<div class="dashboard-top">
+  <nav class="dashboard-nav">
+    <div class="dashboard-links">
+      <a href="{% url 'core:home' %}">Home</a>
+      <a href="{% url 'core:dashboard_admin' %}">Dashboard</a>
+      <a href="#">Utenti</a>
+      <a href="{% url 'core:prodotto_list' %}">Prodotti</a>
+      <form method="post" action="{% url 'accounts:logout' %}" class="logout-form">
+        {% csrf_token %}
+        <button type="submit" class="logout">Logout</button>
+      </form>
+    </div>
+  </nav>
+</div>
+
+<div class="dashboard-container">
+  <h1>Conferma Eliminazione</h1>
+
+  <div class="section" style="background-color: #fff3cd; border-left: 4px solid #ffc107; margin-bottom: 20px;">
+    <p style="color: #856404; margin: 0;">
+      <strong>⚠ Attenzione!</strong> Questa azione non può essere annullata.
+    </p>
+  </div>
+
+  <div class="section">
+    <p style="font-size: 16px; color: #333; margin-bottom: 20px;">
+      Sei sicuro di voler eliminare il prodotto: <strong>{{ object.nome }}</strong>?
+    </p>
+
+    <h2>Dettagli Prodotto</h2>
+    
+    <div style="margin-top: 15px;">
+      <div style="margin-bottom: 15px;">
+        <label style="font-weight: bold; color: #333;">Nome:</label>
+        <p style="margin: 5px 0; color: #555;">{{ object.nome }}</p>
+      </div>
+
+      <div style="margin-bottom: 15px;">
+        <label style="font-weight: bold; color: #333;">Codice:</label>
+        <p style="margin: 5px 0; color: #555;">{{ object.codice }}</p>
+      </div>
+
+      <div style="margin-bottom: 15px;">
+        <label style="font-weight: bold; color: #333;">Categoria:</label>
+        <p style="margin: 5px 0; color: #555;">{{ object.categoria }}</p>
+      </div>
+
+      <div style="margin-bottom: 15px;">
+        <label style="font-weight: bold; color: #333;">Prezzo:</label>
+        <p style="margin: 5px 0; color: #555;">{{ object.prezzo }} €</p>
+      </div>
+
+      <div style="margin-bottom: 15px;">
+        <label style="font-weight: bold; color: #333;">Quantità:</label>
+        <p style="margin: 5px 0; color: #555;">{{ object.quantita }}</p>
+      </div>
+
+      <div style="margin-bottom: 15px;">
+        <label style="font-weight: bold; color: #333;">Descrizione:</label>
+        <p style="margin: 5px 0; color: #555;">{{ object.descrizione|default:"Non disponibile" }}</p>
+      </div>
+    </div>
+
+    <form method="post" class="form-actions" style="margin-top: 30px;">
+      {% csrf_token %}
+      <button type="submit" class="btn btn-danger" style="background-color: #d9534f; color: white;">Sì, elimina</button>
+      <a href="{% url 'core:prodotto_list' %}" class="btn btn-secondary">Annulla</a>
+    </form>
+  </div>
+</div>
+
+{% endblock %}

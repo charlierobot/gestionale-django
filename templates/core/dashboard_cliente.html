@@ -1,0 +1,107 @@
+{% extends "core/base.html" %}
+{% load static %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'core/dashboard.css' %}">
+
+<div class="dashboard-container">
+    <div class="dashboard-top">
+        <div class="dashboard-nav">
+            <a href="{% url 'core:dashboard_cliente' %}">Dashboard</a>
+            <a href="{% url 'core:cart_detail' %}">Carrello</a>
+            <a href="{% url 'core:ordini_cliente' %}">I Miei Ordini</a>
+            <form method="post" action="{% url 'accounts:logout' %}" class="logout-form">
+                {% csrf_token %}
+                <button type="submit" class="logout">Logout</button>
+            </form>
+        </div>
+    </div>
+
+    <h1>Ciao, {{ user.username }}!</h1>
+
+    <div class="section">
+        <h2>Prodotti Disponibili</h2>
+        {% if prodotti %}
+            <div class="cards">
+                {% for prodotto in prodotti %}
+                <div class="card prodotto-card">
+                    <h3>{{ prodotto.nome }}</h3>
+                    <p class="price">€{{ prodotto.prezzo }}</p>
+                    <p class="stock">Disponibili: {{ prodotto.quantita }}</p>
+                    <form method="post" action="{% url 'core:add_to_cart' prodotto.id %}">
+                        {% csrf_token %}
+                        <input type="number" name="quantity" value="1" min="1" max="{{ prodotto.quantita }}" class="qty-input">
+                        <button type="submit" class="btn-add">Aggiungi al Carrello</button>
+                    </form>
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p>Nessun prodotto disponibile</p>
+        {% endif %}
+    </div>
+</div>
+
+<style>
+        .prodotto-card {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        min-height: 280px;
+    }
+
+    .prodotto-card h3 {
+        color: #4a9b8e;
+        font-size: 20px;
+        margin-bottom: 16px;
+    }
+
+    .prodotto-card .price {
+        font-size: 28px !important;
+        font-weight: 700;
+        color: #4a9b8e;
+        margin: 8px 0;
+    }
+
+    .prodotto-card .stock {
+        color: #666;
+        font-size: 14px !important;
+        margin-bottom: 16px;
+    }
+
+    .qty-input {
+        width: 100%;
+        padding: 10px;
+        border: 2px solid #e0e0e0;
+        border-radius: 6px;
+        font-size: 15px;
+        margin-bottom: 12px;
+        transition: all 0.3s ease;
+    }
+
+    .qty-input:focus {
+        outline: none;
+        border-color: #4a9b8e;
+        box-shadow: 0 0 0 3px rgba(74, 155, 142, 0.1);
+    }
+
+    .btn-add {
+        width: 100%;
+        padding: 12px;
+        background: linear-gradient(135deg, #4a9b8e 0%, #3a8b7e 100%);
+        color: white;
+        border: none;
+        border-radius: 6px;
+        font-size: 15px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .btn-add:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(74, 155, 142, 0.3);
+    }
+</style>
+{% endblock %}
+

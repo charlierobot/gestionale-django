@@ -1,0 +1,94 @@
+{% extends 'base.html' %}
+{% block content %}
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f9f9f9;
+        margin: 0;
+        padding: 20px;
+    }
+    h1 {
+        color: #333;
+        text-align: center;
+    }
+    .alert {
+        padding: 10px;
+        margin: 10px 0;
+        border-radius: 5px;
+    }
+    .alert.success {
+        background-color: #d4edda;
+        color: #155724;
+    }
+    .alert.error {
+        background-color: #f8d7da;
+        color: #721c24;
+    }
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 20px 0;
+    }
+    th, td {
+        padding: 10px;
+        text-align: left;
+        border: 1px solid #ddd;
+    }
+    th {
+        background-color: #007bff;
+        color: white;
+    }
+    button {
+        background-color: #28a745;
+        color: white;
+        border: none;
+        padding: 10px 15px;
+        cursor: pointer;
+        border-radius: 5px;
+    }
+    button:hover {
+        background-color: #218838;
+    }
+    a {
+        display: block;
+        text-align: center;
+        margin-top: 20px;
+        color: #007bff;
+        text-decoration: none;
+    }
+    a:hover {
+        text-decoration: underline;
+    }
+</style>
+
+<h1>Il tuo Carrello</h1>
+{% if messages %}
+    {% for message in messages %}
+        <div class="alert {{ message.tags }}">{{ message }}</div>
+    {% endfor %}
+{% endif %}
+{% if cart|length > 0 %}
+    <form method="post">
+        {% csrf_token %}
+        <table>
+            <tr><th>Prodotto</th><th>Prezzo</th><th>Quantità</th><th>Totale</th></tr>
+            {% for item in cart %}
+                <tr>
+                    <td>{{ item.prodotto.nome }}</td>
+                    <td>€{{ item.price }}</td>
+                    <td>
+                        <input type="number" name="qty_{{ item.prodotto.id }}"
+                               value="{{ item.qty }}" min="0" max="{{ item.prodotto.quantita }}">
+                    </td>
+                    <td>€{{ item.totale }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+        <p><strong>Totale: €{{ cart.get_total }}</strong></p>
+        <button type="submit">Aggiorna Carrello</button>
+    </form>
+    <a href="{% url 'checkout' %}">Procedi all'ordine</a>
+{% else %}
+    <p>Il carrello è vuoto</p>
+{% endif %}
+{% endblock %}

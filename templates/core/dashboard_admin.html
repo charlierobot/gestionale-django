@@ -1,0 +1,89 @@
+{% extends "core/base.html" %}
+{% load static %}
+{% load djicons %}
+{% block title %}Dashboard Amministratore{% endblock %}
+{% block css %}
+<link rel="stylesheet" href="{% static 'core/dashboard.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="dashboard-layout">
+
+<div class="dashboard-top">
+    <nav class="dashboard-nav">
+            <div class="dashboard-links">
+                <a href="{% url 'core:home' %}">Home</a>
+                <a href="{% url 'core:dashboard_admin' %}">Dashboard</a>
+                <a href="{% url 'core:admin_ordine_list' %}">Ordini</a>
+                <a href="{% url 'core:prodotto_list' %}">Prodotti</a>
+                <form method="post" action="{% url 'accounts:logout' %}" class="logout-form">
+                {% csrf_token %}
+                <button type="submit" class="logout">Logout</button>
+                </form>
+            </div>
+    </nav>
+</div>
+
+   <div class="dashboard-container">
+
+    <h1>Dashboard Amministratore</h1>
+
+    <div class="cards">
+        <div class="card utenti">
+            <h3>Utenti Totali</h3>
+            <p>{{ stats.totale_utenti }}</p>
+        </div>
+        <div class="card admin">
+            <h3>Admin</h3>
+            <p>{{ utenti_per_ruolo.0.count }}</p>
+        </div>
+        <div class="card fornitori">
+            <h3>Fornitori</h3>
+            <p>{{ utenti_per_ruolo.1.count }}</p>
+        </div>
+        <div class="card clienti">
+            <h3>Clienti</h3>
+            <p>{{ utenti_per_ruolo.2.count }}</p>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>Prodotti con scorte basse</h2>
+        {% if prodotti_sotto_scorta %}
+            <ul>
+                {% for prodotto in prodotti_sotto_scorta %}
+                    <li>{{ prodotto.nome }} ({{ prodotto.quantita }})</li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>Nessun prodotto sotto la soglia.</p>
+        {% endif %}
+    </div>
+
+    <div class="section">
+        <h2>Ultimi utenti registrati</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Username</th>
+                    <th>Ruolo</th>
+                    <th>Data registrazione</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in ultimi_utenti %}
+                <tr>
+                    <td>{{ user.username }}</td>
+                    <td>{{ user.ruolo }}</td>
+                    <td>{{ user.date_joined|date:"d/m/Y" }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+</div>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,103 @@
+{% extends "core/base.html" %}
+
+{% block content %}
+
+{% load static %}
+{% load djicons %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'core/dashboard.css' %}">
+<link rel="stylesheet" href="{% static 'core/prodotto_list.css' %}">
+{% endblock %}
+
+<div class="dashboard-layout">
+
+<div class="dashboard-top">
+    <nav class="dashboard-nav">
+        <div class="dashboard-links">
+            <a href="{% url 'core:home' %}">Home</a>
+            <a href="{% url 'core:dashboard_admin' %}">Dashboard</a>
+            <a href="#">Utenti</a>
+            <a href="{% url 'core:prodotto_list' %}">Prodotti</a>
+            <form method="post" action="{% url 'accounts:logout' %}" class="logout-form">
+                {% csrf_token %}
+                <button type="submit" class="logout">Logout</button>
+            </form>
+        </div>
+    </nav>
+</div>
+
+<div class="dashboard-container">
+    <h1>Lista Prodotti</h1>
+
+    <div class="section">
+        <h2>Filtri di ricerca</h2>
+        <form method="get" class="filter-form">
+            <input type="text" name="q" value="{{ search }}" placeholder="Cerca prodotto">
+
+            <select name="categoria">
+                <option value="">Tutte le categorie</option>
+                {% for c in categorie %}
+                    <option value="{{ c.id }}"
+                        {% if c.id|stringformat:"s" == categoria_selezionata %}selected{% endif %}>
+                        {{ c.nome }}
+                    </option>
+                {% endfor %}
+            </select>
+
+            <button type="submit">Filtra</button>
+        </form>
+    </div>
+
+    <div class="section">
+        <h2>Prodotti</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Nome Prodotto</th>
+                    <th>Azioni</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for prodotto in prodotti %}
+                <tr>
+                    <td>{{ prodotto.nome }}</td>
+                    <td>
+                        <a href="{% url 'core:prodotto_detail' prodotto.id %}">Visualizza</a> |
+                        <a href="{% url 'core:prodotto_update' prodotto.id %}">Modifica</a> |
+                        <a href="{% url 'core:prodotto_delete' prodotto.id %}">Elimina</a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="2">Nessun prodotto trovato.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {% if is_paginated %}
+    <div class="pagination">
+        {% if page_obj.has_previous %}
+            <a href="?page={{ page_obj.previous_page_number }}{% if categoria_selezionata %}&categoria={{ categoria_selezionata }}{% endif %}{% if search %}&q={{ search }}{% endif %}">
+                ⬅ Precedente
+            </a>
+        {% endif %}
+
+        <span>
+            Pagina {{ page_obj.number }} di {{ page_obj.paginator.num_pages }}
+        </span>
+
+        {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}{% if categoria_selezionata %}&categoria={{ categoria_selezionata }}{% endif %}{% if search %}&q={{ search }}{% endif %}">
+                Successiva ➡
+            </a>
+        {% endif %}
+    </div>
+    {% endif %}
+
+</div>
+
+</div>
+{% endblock %}

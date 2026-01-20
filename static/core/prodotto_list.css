@@ -1,0 +1,70 @@
+    .filter-form {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        flex-wrap: wrap;
+    }
+
+    .filter-form input[type="text"] {
+        padding: 8px 12px;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        flex: 1;
+        min-width: 200px;
+    }
+
+    .filter-form select {
+        padding: 8px 12px;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        min-width: 150px;
+    }
+
+    .filter-form button {
+        padding: 8px 20px;
+        background: #26b988;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-weight: bold;
+    }
+
+    .action-link {
+        color: #26b988;
+        text-decoration: none;
+        margin-right: 15px;
+    }
+
+    .delete-link {
+        color: #d9534f;
+        text-decoration: none;
+    }
+
+    .empty-message {
+        text-align: center;
+        color: #999;
+    }
+
+    .pagination {
+        text-align: center;
+        margin-top: 20px;
+    }
+
+    .pagination a {
+        padding: 8px 16px;
+        background: #26b988;
+        color: white;
+        text-decoration: none;
+        border-radius: 6px;
+        margin: 0 5px;
+    }
+
+    .pagination span {
+        margin: 0 15px;
+        color: #555;
+    }
+
+ .dashboard-layout .card.prodotti {
+    background-color: #ffb74dff;
+}

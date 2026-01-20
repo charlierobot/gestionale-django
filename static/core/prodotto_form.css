@@ -1,0 +1,122 @@
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #333;
+}
+
+.form-group input,
+.form-group textarea,
+.form-group select {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 14px;
+    font-family: inherit;
+    transition: all 0.3s ease;
+}
+
+.form-group textarea {
+    resize: vertical;
+    min-height: 100px;
+}
+
+.form-group input:focus,
+.form-group textarea:focus,
+.form-group select:focus {
+    outline: none;
+    border-color: #26b988;
+    box-shadow: 0 0 0 3px rgba(38, 185, 136, 0.1);
+    animation: focusPulse 0.3s ease-out;
+}
+
+@keyframes focusPulse {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.01);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+.form-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 30px;
+    flex-wrap: wrap;
+}
+
+.form-actions .btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+    transition: all 0.3s ease;
+    flex: 1;
+    min-width: 120px;
+    text-align: center;
+}
+
+.form-actions .btn-primary {
+    background-color: #26b988;
+    color: white;
+    animation: slideIn 0.5s ease-out;
+}
+
+.form-actions .btn-primary:hover {
+    background-color: #1fa076;
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 0 4px 12px rgba(38, 185, 136, 0.4);
+}
+
+.form-actions .btn-primary:active {
+    transform: translateY(0) scale(0.98);
+}
+
+.form-actions .btn-secondary {
+    background-color: #f1f1f1;
+    color: #555;
+    animation: slideIn 0.5s ease-out 0.1s backwards;
+}
+
+.form-actions .btn-secondary:hover {
+    background-color: #e0e0e0;
+    transform: translateY(-2px) scale(1.02);
+}
+
+.form-actions .btn-secondary:active {
+    transform: translateY(0) scale(0.98);
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@media (max-width: 768px) {
+    .form-actions {
+        flex-direction: column;
+    }
+    
+    .form-actions .btn {
+        width: 100%;
+    }
+}

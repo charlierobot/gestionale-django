@@ -1,0 +1,52 @@
+{% extends "core/base.html" %}
+{% load static %}
+{% load djicons %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'core/dashboard.css' %}">
+<link rel="stylesheet" href="{% static 'core/prodotto_list.css' %}">
+<link rel="stylesheet" href="{% static 'core/prodotto_form.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<div class="dashboard-top">
+    <nav class="dashboard-nav">
+            <div class="dashboard-links">
+                <a href="{% url 'core:home' %}">Home</a>
+                <a href="{% url 'core:dashboard_admin' %}">Dashboard</a>
+                <a href="#">Utenti</a>
+                <a href="{% url 'core:prodotto_list' %}">Prodotti</a>
+                <form method="post" action="{% url 'accounts:logout' %}" class="logout-form">
+                {% csrf_token %}
+                <button type="submit" class="logout">Logout</button>
+                </form>
+            </div>
+    </nav>
+</div>
+    <div class="dashboard-container">
+        <h1>{% if object %}Modifica{% else %}Nuovo{% endif %} Prodotto</h1>
+
+        <div class="section">
+            <form method="post">
+                {% csrf_token %}
+                {% for field in form %}
+                    <div class="form-group">
+                        {{ field.label_tag }}
+                        {{ field }}
+                        {% if field.errors %}
+                            <span style="color: #d32f2f; font-size: 12px;">{{ field.errors }}</span>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">Salva</button>
+                    <a href="{% url 'core:prodotto_list' %}" class="btn btn-secondary">Annulla</a>
+                </div>
+            </form>
+        </div>
+
+    </div>
+
+</div>
+{% endblock %}

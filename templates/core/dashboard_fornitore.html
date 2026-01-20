@@ -1,0 +1,331 @@
+{% extends "core/base.html" %}
+{% load static %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'core/dashboard_fornitore.css' %}">
+<style>
+    .dashboard-layout {
+        display: grid;
+        grid-template-columns: 260px 1fr;
+        min-height: 100vh;
+        background: #f0f9f8;
+    }
+
+    .sidebar {
+        background: linear-gradient(180deg, #5fc3ac 0%, #4db39e 100%);
+        color: white;
+        padding: 2rem 1.5rem;
+        position: sticky;
+        top: 0;
+        height: 100vh;
+    }
+
+    .sidebar h2 {
+        font-size: 1.5rem;
+        margin-bottom: 2rem;
+        font-weight: 700;
+    }
+
+    .user-box {
+        background: rgba(255,255,255,0.2);
+        padding: 1rem;
+        border-radius: 8px;
+        margin-bottom: 2rem;
+    }
+
+    .nav-links a {
+        display: block;
+        padding: 0.75rem 1rem;
+        margin-bottom: 0.5rem;
+        border-radius: 6px;
+        transition: all 0.3s;
+        color: rgba(255,255,255,0.9);
+    }
+
+    .nav-links a:hover, .nav-links a.active {
+        background: rgba(255,255,255,0.3);
+        color: white;
+    }
+
+    .content {
+        padding: 2rem 3rem;
+        max-width: 1400px;
+    }
+
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .stat-card {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(95,195,172,0.15);
+        border-left: 4px solid;
+    }
+
+    .stat-card.blue { border-left-color: #5fc3ac; }
+    .stat-card.green { border-left-color: #4db39e; }
+    .stat-card.orange { border-left-color: #7dd4c0; }
+    .stat-card.red { border-left-color: #3a9d8a; }
+
+    .stat-card h3 {
+        font-size: 0.875rem;
+        color: #5a6f6d;
+        margin-bottom: 0.5rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .stat-card .value {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #2c4f4a;
+    }
+
+    .charts-grid {
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .chart-container {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(95,195,172,0.15);
+    }
+
+    .chart-container h2 {
+        font-size: 1.25rem;
+        margin-bottom: 1.5rem;
+        color: #2c4f4a;
+    }
+
+    .data-section {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(95,195,172,0.15);
+        margin-bottom: 1.5rem;
+    }
+
+    .table-responsive {
+        overflow-x: auto;
+    }
+
+    .modern-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .modern-table thead {
+        background: #e8f7f4;
+    }
+
+    .modern-table th {
+        padding: 1rem;
+        text-align: left;
+        font-weight: 600;
+        color: #2c4f4a;
+        font-size: 0.875rem;
+    }
+
+    .modern-table td {
+        padding: 1rem;
+        border-top: 1px solid #d4ebe7;
+    }
+
+    .modern-table tbody tr:hover {
+        background: #f8fcfb;
+    }
+
+    .badge {
+        display: inline-block;
+        padding: 0.25rem 0.75rem;
+        border-radius: 12px;
+        font-size: 0.75rem;
+        font-weight: 600;
+    }
+
+    .badge.pending { background: #fff4e6; color: #c17211; }
+    .badge.completed { background: #e8f7f4; color: #2c6e5f; }
+    .badge.cancelled { background: #fee2e2; color: #991b1b; }
+
+    @media (max-width: 1024px) {
+        .dashboard-layout {
+            grid-template-columns: 1fr;
+        }
+        .sidebar {
+            position: relative;
+            height: auto;
+        }
+        .charts-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @media (max-width: 640px) {
+        .content {
+            padding: 1rem;
+        }
+        .stats-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+{% endblock %}
+
+{% block content %}
+<div class="dashboard-layout">
+    <aside class="sidebar">
+        <h2>📦 Gestionale</h2>
+        <div class="user-box">
+            <strong>{{ request.user.username }}</strong>
+            <span>Fornitore</span>
+        </div>
+        <nav>
+            <div class="nav-links">
+                <a href="{% url 'core:dashboard_fornitore' %}" class="active">📊 Dashboard</a>
+                <a href="{% url 'core:prodotto_list' %}">📦 I Miei Prodotti</a>
+                <a href="#">📋 Ordini Ricevuti</a>
+                <a href="#">📈 Statistiche</a>
+            </div>
+        </nav>
+        <a class="logout" href="{% url 'accounts:logout' %}" style="margin-top: auto; display: block;">🚪 Logout</a>
+    </aside>
+
+    <main class="content">
+        <h1 style="margin-bottom: 2rem; color: #2c4f4a;">Dashboard Fornitore</h1>
+        
+        <div class="stats-grid">
+            <div class="stat-card blue">
+                <h3>Prodotti Totali</h3>
+                <div class="value">{{ prodotti_count }}</div>
+            </div>
+            <div class="stat-card green">
+                <h3>Disponibili</h3>
+                <div class="value">{{ disponibili_count }}</div>
+            </div>
+            <div class="stat-card orange">
+                <h3>Esauriti</h3>
+                <div class="value">{{ esauriti_count }}</div>
+            </div>
+            <div class="stat-card red">
+                <h3>Ordini in Attesa</h3>
+                <div class="value">{{ ordini_pending }}</div>
+            </div>
+        </div>
+
+        <div class="charts-grid">
+            <div class="chart-container">
+                <h2>Andamento Vendite (Ultimi 7 Giorni)</h2>
+                <canvas id="salesChart"></canvas>
+            </div>
+            <div class="chart-container">
+                <h2>Prodotti per Categoria</h2>
+                <canvas id="categoryChart"></canvas>
+            </div>
+        </div>
+
+        <div class="data-section">
+            <h2 style="margin-bottom: 1.5rem;">Ordini Recenti</h2>
+            {% if recent_orders %}
+            <div class="table-responsive">
+                <table class="modern-table">
+                    <thead>
+                        <tr>
+                            <th>Ordine</th>
+                            <th>Cliente</th>
+                            <th>Prodotto</th>
+                            <th>Quantità</th>
+                            <th>Data</th>
+                            <th>Stato</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in recent_orders %}
+                        <tr>
+                            <td><strong>#{{ item.ordine.id }}</strong></td>
+                            <td>{{ item.ordine.utente.username }}</td>
+                            <td>{{ item.prodotto.nome }}</td>
+                            <td>{{ item.quantita }}</td>
+                            <td>{{ item.ordine.data_ordine|date:"d/m/Y" }}</td>
+                            <td><span class="badge {{ item.ordine.stato }}">{{ item.ordine.get_stato_display }}</span></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <p style="color: #5a6f6d; text-align: center; padding: 2rem;">Nessun ordine recente</p>
+            {% endif %}
+        </div>
+
+        <div class="data-section">
+            <h2 style="margin-bottom: 1.5rem;">⚠️ Prodotti in Esaurimento</h2>
+            {% if low_stock_products %}
+            <ul style="list-style: none; padding: 0;">
+                {% for prodotto in low_stock_products %}
+                <li style="display: flex; justify-content: space-between; align-items: center; padding: 1rem; border-bottom: 1px solid #d4ebe7;">
+                    <div>
+                        <strong>{{ prodotto.nome }}</strong>
+                        <span style="color: #dc2626; margin-left: 1rem; font-size: 0.875rem;">Giacenza: {{ prodotto.giacenza }} {{ prodotto.unita_misura }}</span>
+                    </div>
+                    <a href="{% url 'core:prodotto_update' prodotto.pk %}" style="background: #5fc3ac; color: white; padding: 0.5rem 1rem; border-radius: 6px; text-decoration: none;">Aggiorna</a>
+                </li>
+                {% endfor %}
+            </ul>
+            {% else %}
+            <p style="color: #4db39e; text-align: center; padding: 2rem;">✓ Tutti i prodotti hanno scorte adeguate</p>
+            {% endif %}
+        </div>
+    </main>
+</div>
+
+<script>
+// Sales Chart
+const salesCtx = document.getElementById('salesChart').getContext('2d');
+new Chart(salesCtx, {
+    type: 'line',
+    data: {
+        labels: ['Lun', 'Mar', 'Mer', 'Gio', 'Ven', 'Sab', 'Dom'],
+        datasets: [{
+            label: 'Vendite',
+            data: [12, 19, 15, 25, 22, 30, 28],
+            borderColor: '#5fc3ac',
+            backgroundColor: 'rgba(95, 195, 172, 0.1)',
+            tension: 0.4,
+            fill: true
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: true,
+        plugins: { legend: { display: false } }
+    }
+});
+
+// Category Chart
+const categoryCtx = document.getElementById('categoryChart').getContext('2d');
+new Chart(categoryCtx, {
+    type: 'doughnut',
+    data: {
+        labels: ['Elettronica', 'Abbigliamento', 'Alimentari', 'Casa'],
+        datasets: [{
+            data: [30, 25, 20, 25],
+            backgroundColor: ['#5fc3ac', '#4db39e', '#7dd4c0', '#3a9d8a']
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: true
+    }
+});
+</script>
+{% endblock %}

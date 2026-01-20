@@ -1,0 +1,37 @@
+{% extends "core/base_public.html" %}
+{% load static %}
+
+{% block title %}Accesso al gestionale{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'core/public.css' %}">
+<link rel="stylesheet" href="{% static 'core/home.css' %}">
+<div class="home-container">
+    <div class="home-header">
+        <h1>Accesso al gestionale</h1>
+        <p class="subtitle">
+            Seleziona il tuo ruolo per accedere alla dashboard dedicata.
+        </p>
+    </div>
+
+    <div class="roles-grid">
+        <div class="role-card">
+            <h3>Admin</h3>
+            <p>Amministrazione utenti e statistiche generali.</p>
+            <a href="{% url 'accounts:login' %}?next=/accounts/dashboard/admin/">Accedi</a>
+        </div>
+
+        <div class="role-card">
+            <h3>Fornitore</h3>
+            <p>Gestisci i prodotti e la disponibilità.</p>
+            <a href="{% url 'accounts:login' %}?next=/accounts/dashboard/fornitore/">Accedi</a>
+        </div>
+
+        <div class="role-card">
+            <h3>Cliente</h3>
+            <p>Visualizza prodotti, ordini e storico acquisti.</p>
+            <a href="{% url 'accounts:login' %}?next=/accounts/dashboard/cliente/">Accedi</a>
+        </div>
+    </div>
+</div>
+{% endblock %}
